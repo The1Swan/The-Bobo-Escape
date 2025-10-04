@@ -29,23 +29,23 @@ function patrol() {
 // --- The Level Design ---
 const levelMap = [
     "==============================",
-    "= =     =                    =",
-    "= = === =                    =",
-    "= =a=                        =",
-    "= ========                   =",
-    "=        a                   =",
-    "=                            =",
-    "=                            =",
-    "=                            =",
-    "=                            =",
-    "=                            =",
-    "=                            =",
-    "=                            =",
-    "=                            =",
-    "=                            =",
-    "=                            =",
-    "=                            =",
-    "=                            =",
+    "=  =  = =  a=   = = =     =a =",
+    "= ===a= == === == =   ==  == =",
+    "=   =   =      a   = ==  ==  =",
+    "= === = === = = = = a=    == =",
+    "=   =a=   = = = =   =  ==a   =",
+    "=== === === = = === = = = = ==",
+    "=     =  a= = = =   =   = =a =",
+    "= === = === = === === = ======",
+    "= = = =     =   = =a  =   =  =",
+    "= = = =a=== ===a=== === === ==",
+    "=a=       =   =   = =a=     a=",
+    "=== === === ===== === = === ==",
+    "=   = =  a= =   =   = = =   ==",
+    "= === === === === === === ====",
+    "= a   =     =  a= =   =      =",
+    "=== === = = = === = === === ==",
+    "=    a=   =   =     =   =   a=",
     "==============================",
 ];
 
@@ -59,12 +59,12 @@ const levelConf = {
             color(0, 0, 255), // Blue walls
             area(),
             body({ isStatic: true }), // Walls are solid
-            body({ isObstacle: true }), 
             "wall",
         ],
         "a": () => [
             sprite("apple"),
             area(),
+            scale(0.5),
             "apple",
         ],
     }
@@ -76,9 +76,18 @@ addLevel(levelMap, levelConf);
 const player = add([
     sprite("bobo"),
     pos(60, 60), // Starting position
+    scale(0.5),
     area(),
+    body(),
     anchor("center"),
 ]);
+
+let score = 0;
+    const scoreLabel =add([
+        text("Score:" + score),
+        pos(24,24),
+        fixed(),
+    ]);
 
 const SPEED = 200;
 
@@ -89,9 +98,28 @@ onKeyDown("up", () => { player.move(0, -SPEED); });
 onKeyDown("down", () => { player.move(0, SPEED); });
 
 // --- Collection Logic ---
-player.onCollide("apple", (apple) => {
-    destroy(apple);
-});
+
 player.onCollide("wall", (wall) => {
     player.stop()
+});
+player.onCollide("apple", (apple) =>{
+    destroy(apple);
+    score+= 10;
+    scoreLabel.text ="Score: " + score;
+});
+player.onCollide("dino", (dino) => {
+    destroy(player);
+    go("lose");
+});
+
+// --- Lose Scene ---
+scene("lose", () => {
+    add([ text("Game Over"), pos(center()), anchor("center") ]);
+    wait(2, () => { go("main", { level: 0 }); });
+});
+
+// --- Win Scene ---
+scene("win", () => {
+    add([ text("You Win!"), pos(center()), anchor("center") ]);
+    wait(2, () => { go("main", { level: 0 }); });
 });
