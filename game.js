@@ -27,6 +27,8 @@ function patrol() {
     };
 }
 
+let score = 0;
+
 scene("main", ({ level } = { level: 0 }) => {
 
     // Array of all level layouts
@@ -144,12 +146,11 @@ scene("main", ({ level } = { level: 0 }) => {
         anchor("center"),
     ]);
 
-    let score = 0;
-        const scoreLabel =add([
-            text("Score:" + score),
-            pos(24,24),
-            fixed(),
-        ]);
+    const scoreLabel =add([
+        text("Score:" + score),
+        pos(24,24),
+        fixed(),
+    ]);
 
     const SPEED = 200;
 
@@ -162,7 +163,7 @@ scene("main", ({ level } = { level: 0 }) => {
         if (currentLevel + 1 < LEVELS.length) {
                 go("main", { level: currentLevel + 1 });
             } 
-        else if (){
+        else {
                 go("win");
             }
     });
@@ -172,19 +173,20 @@ scene("main", ({ level } = { level: 0 }) => {
         scoreLabel.text ="Score: " + score;
     });
     player.onCollide("dino", (dino) => {
-        destroy(player);
-        go("lose");
+    destroy(player);
+    go("lose", {score});
     });
 });
 scene("lose", () => {
     add([ text("Game Over"), pos(center()), anchor("center") ]);
-    wait(2, () => { go("main", { level: 0 }); });
+    wait(2, () => { 
+        score = 0;
+        go("main", { level: 0 }); });
 });
 
 // --- Win Scene ---
 scene("win", () => {
-    add([ text("You Win!"), pos(center()), anchor("center") ]);
-    wait(2, () => { go("main", { level: 0 }); });
+    add([ text("You Win! Your score is " + score + "."), pos(center()), anchor("center") ]);
 });
 
 go("main");
