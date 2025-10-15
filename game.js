@@ -1,7 +1,7 @@
 kaboom({
     width: 1200,
     height: 900,
-    background: [73, 183, 242], // Black background for a maze
+    background: [73, 183, 242],
 });
 
 loadSprite("apple", "https://kaboomjs.com/sprites/apple.png");
@@ -173,8 +173,8 @@ scene("main", ({ level } = { level: 0 }) => {
         scoreLabel.text ="Score: " + score;
     });
     player.onCollide("dino", (dino) => {
-    destroy(player);
-    go("lose", {score});
+        destroy(player);
+        go("lose", {score});
     });
 });
 scene("lose", () => {
